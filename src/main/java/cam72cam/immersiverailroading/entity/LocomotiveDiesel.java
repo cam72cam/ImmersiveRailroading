@@ -170,10 +170,10 @@ public class LocomotiveDiesel extends Locomotive {
 				if (this.horn == null) {
 					this.horn = ImmersiveRailroading.proxy.newSound(this.getDefinition().horn, false, 100, this.soundGauge());
 					this.idle = ImmersiveRailroading.proxy.newSound(this.getDefinition().idle, true, 80, this.soundGauge());
-					this.running = ImmersiveRailroading.proxy.newSound(this.getDefinition().running, true, 80, this.soundGauge());
+					this.running = this.getDefinition().running != null ? ImmersiveRailroading.proxy.newSound(this.getDefinition().running, true, 80, this.soundGauge()) : null;
 				}
 				
-				if (isRunning() && this.getCurrentSpeed().metric() == 0) {
+				if (isRunning() && (this.getCurrentSpeed().metric() == 0 || running == null)) {
 					if (!idle.isPlaying()) {
 						this.idle.play(getPositionVector());
 					}
@@ -183,13 +183,15 @@ public class LocomotiveDiesel extends Locomotive {
 					}
 				}
 				
-				if (isRunning() && this.getCurrentSpeed().metric() != 0) {
-					if (!running.isPlaying()) {
-						this.running.play(getPositionVector());
-					}
-				} else {
-					if (running.isPlaying()) {
-						running.stop();
+				if (running != null) {
+					if (isRunning() && this.getCurrentSpeed().metric() != 0) {
+						if (!running.isPlaying()) {
+							this.running.play(getPositionVector());
+						}
+					} else {
+						if (running.isPlaying()) {
+							running.stop();
+						}
 					}
 				}
 				
@@ -210,12 +212,22 @@ public class LocomotiveDiesel extends Locomotive {
 					horn.update();
 				}
 				
-				if (running.isPlaying()) {
-					running.setPitch(0.7f+this.soundThrottle/4);
-					running.setVolume(Math.max(0.1f, this.soundThrottle));
-					running.setPosition(getPositionVector());
-					running.setVelocity(getVelocity());
-					running.update();
+				if (running != null) {
+					if (running.isPlaying()) {
+						running.setPitch(0.7f+this.soundThrottle/4);
+						running.setVolume(Math.max(0.1f, this.soundThrottle));
+						running.setPosition(getPositionVector());
+						running.setVelocity(getVelocity());
+						running.update();
+					}
+				} else {
+					if (idle.isPlaying()) {
+						idle.setPitch(0.7f+this.soundThrottle/4);
+						idle.setVolume(Math.max(0.1f, this.soundThrottle));
+						idle.setPosition(getPositionVector());
+						idle.setVelocity(getVelocity());
+						idle.update();
+					}
 				}
 			}
 			

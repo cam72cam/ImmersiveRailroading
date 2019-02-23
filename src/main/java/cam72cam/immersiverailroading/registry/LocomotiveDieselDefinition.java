@@ -64,22 +64,24 @@ public class LocomotiveDieselDefinition extends LocomotiveDefinition {
 		
 		JsonObject sounds = data.has("sounds") ? data.get("sounds").getAsJsonObject() : null;
 		
-		if (sounds != null && sounds.has("idle")) {
-			idle = new ResourceLocation(ImmersiveRailroading.MODID, sounds.get("idle").getAsString());
-		} else {
-			idle = new ResourceLocation(ImmersiveRailroading.MODID, "sounds/diesel/default/idle.ogg");
-		}
-		
-		if (sounds != null && sounds.has("running")) {
-			running = new ResourceLocation(ImmersiveRailroading.MODID, sounds.get("running").getAsString());
-		} else {
-			running = idle;
-		}
-		
-		if (sounds != null && sounds.has("horn")) {
-			horn = new ResourceLocation(ImmersiveRailroading.MODID, sounds.get("horn").getAsString());
-		} else {
-			horn = new ResourceLocation(ImmersiveRailroading.MODID, "sounds/diesel/default/horn.ogg");
+		if (sounds != null) {
+			if (sounds.has("idle")) {
+				idle = new ResourceLocation(ImmersiveRailroading.MODID, sounds.get("idle").getAsString());
+			} else {
+				idle = new ResourceLocation(ImmersiveRailroading.MODID, "sounds/diesel/default/idle.ogg");
+			}
+			
+			if (sounds.has("horn")) {
+				horn = new ResourceLocation(ImmersiveRailroading.MODID, sounds.get("horn").getAsString());
+			} else {
+				horn = new ResourceLocation(ImmersiveRailroading.MODID, "sounds/diesel/default/horn.ogg");
+			}
+			
+			if (sounds.has("running")) {
+				running = new ResourceLocation(ImmersiveRailroading.MODID, sounds.get("running").getAsString());
+			} else {
+				running = null;
+			}
 		}
 	}
 
