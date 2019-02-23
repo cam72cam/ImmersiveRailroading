@@ -73,7 +73,7 @@ public class LocomotiveDieselDefinition extends LocomotiveDefinition {
 		if (sounds != null && sounds.has("running")) {
 			running = new ResourceLocation(ImmersiveRailroading.MODID, sounds.get("running").getAsString());
 		} else {
-			running = new ResourceLocation(ImmersiveRailroading.MODID, "sounds/diesel/default/idle.ogg");
+			running = idle;
 		}
 		
 		if (sounds != null && sounds.has("horn")) {
