@@ -242,6 +242,9 @@ public class ClientProxy extends CommonProxy {
 		keys.put(KeyTypes.AIR_BRAKE_UP, new KeyBinding("ir_keys.increase_brake", Keyboard.KEY_NUMPAD7, "key.categories." + ImmersiveRailroading.MODID));
 		keys.put(KeyTypes.AIR_BRAKE_ZERO, new KeyBinding("ir_keys.zero_brake", Keyboard.KEY_NUMPAD4, "key.categories." + ImmersiveRailroading.MODID));
 		keys.put(KeyTypes.AIR_BRAKE_DOWN, new KeyBinding("ir_keys.decrease_brake", Keyboard.KEY_NUMPAD1, "key.categories." + ImmersiveRailroading.MODID));
+		keys.put(KeyTypes.REVERSER_UP, new KeyBinding("ir_keys.increase_reverser", Keyboard.KEY_NUMPAD9, "key.categories." + ImmersiveRailroading.MODID));
+		keys.put(KeyTypes.REVERSER_DOWN, new KeyBinding("ir_keys.decrease_reverser", Keyboard.KEY_NUMPAD3, "key.categories." + ImmersiveRailroading.MODID));
+		keys.put(KeyTypes.REVERSER_ZERO, new KeyBinding("ir_keys.zero_reverser", Keyboard.KEY_NUMPAD6, "key.categories." + ImmersiveRailroading.MODID));
 		keys.put(KeyTypes.HORN, new KeyBinding("ir_keys.horn", Keyboard.KEY_NUMPADENTER, "key.categories." + ImmersiveRailroading.MODID));
 		keys.put(KeyTypes.DEAD_MANS_SWITCH, new KeyBinding("ir_keys.dead_mans_switch", Keyboard.KEY_NUMPADEQUALS, "key.categories." + ImmersiveRailroading.MODID));
 		keys.put(KeyTypes.START_STOP_ENGINE, new KeyBinding("ir_keys.start_stop_engine", Keyboard.KEY_ADD, "key.categories." + ImmersiveRailroading.MODID));
@@ -252,6 +255,9 @@ public class ClientProxy extends CommonProxy {
 		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.AIR_BRAKE_UP));
 		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.AIR_BRAKE_DOWN));
 		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.AIR_BRAKE_ZERO));
+		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.REVERSER_UP));
+		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.REVERSER_DOWN));
+		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.REVERSER_ZERO));
 		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.HORN));
 		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.DEAD_MANS_SWITCH));
 		ClientRegistry.registerKeyBinding(keys.get(KeyTypes.START_STOP_ENGINE));

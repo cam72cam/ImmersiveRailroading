@@ -25,6 +25,7 @@ public abstract class Locomotive extends FreightTank {
 
 	private static DataParameter<Float> THROTTLE = EntityDataManager.createKey(Locomotive.class, DataSerializers.FLOAT);
 	private static DataParameter<Float> AIR_BRAKE = EntityDataManager.createKey(Locomotive.class, DataSerializers.FLOAT);
+	private static DataParameter<Float> REVERSER = EntityDataManager.createKey(Locomotive.class, DataSerializers.FLOAT);
 	protected static DataParameter<Integer> HORN = EntityDataManager.createKey(Locomotive.class, DataSerializers.VARINT);
 	protected static DataParameter<Optional<UUID>> HORN_PLAYER = EntityDataManager.createKey(Locomotive.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 	
@@ -34,13 +35,14 @@ public abstract class Locomotive extends FreightTank {
 	
 	private boolean deadMansSwitch;
 	private int deadManChangeTimeout;
-	
+	private int keyTimeout;
 	
 	public Locomotive(World world, String defID) {
 		super(world, defID);
 
 		this.getDataManager().register(THROTTLE, 0f);
 		this.getDataManager().register(AIR_BRAKE, 0f);
+		this.getDataManager().register(REVERSER, 0f);
 		this.getDataManager().register(HORN, 0);
 		this.getDataManager().register(HORN_PLAYER, Optional.absent());
 
@@ -69,19 +71,35 @@ public abstract class Locomotive extends FreightTank {
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setFloat("throttle", getThrottle());
-		nbttagcompound.setFloat("brake", getAirBrake());
-		nbttagcompound.setBoolean("deadMansSwitch", deadMansSwitch);
+	protected void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setFloat("throttle", this.getThrottle());
+		nbt.setFloat("brake", this.getAirBrake());
+		nbt.setBoolean("deadMansSwitch", this.deadMansSwitch);
+		nbt.setFloat("reverser", this.getReverser());
+		
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-		super.readEntityFromNBT(nbttagcompound);
-		setThrottle(nbttagcompound.getFloat("throttle"));
-		setAirBrake(nbttagcompound.getFloat("brake"));
-		deadMansSwitch = nbttagcompound.getBoolean("deadMansSwitch");
+	protected void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		this.setThrottle(nbt.getFloat("throttle"));
+		this.setAirBrake(nbt.getFloat("brake"));
+		this.deadMansSwitch = nbt.getBoolean("deadMansSwitch");
+		this.setReverser(nbt.getFloat("reverser"));
+	}
+	
+	public float getReverserNotch () {
+		if ((Object) this instanceof LocomotiveDiesel) {
+			if (this.keyTimeout == 0) {
+				this.keyTimeout = 5;
+				return 1f;
+			}
+			
+			return 0f;
+		}
+		
+		return 0.02f;
 	}
 	
 	@Override
@@ -99,7 +117,7 @@ public abstract class Locomotive extends FreightTank {
 			setThrottle(0f);
 			break;
 		case THROTTLE_DOWN:
-			if (getThrottle() > -1) {
+			if (getThrottle() > 0) {
 				setThrottle(getThrottle() - throttleNotch);
 			}
 			break;
@@ -127,6 +145,20 @@ public abstract class Locomotive extends FreightTank {
 				this.deadManChangeTimeout = 5;
 			}
 			break;
+		case REVERSER_UP:
+			if (this.getReverser() < 1) {
+				this.setReverser(this.getReverser() + getReverserNotch());
+			}
+			break;
+		case REVERSER_DOWN:
+			if (this.getReverser() > -1) {
+				this.setReverser(this.getReverser() - getReverserNotch());
+			}
+			break;
+		case REVERSER_ZERO:
+			if (Math.abs(this.getReverser()) < 0.5) {
+				this.setReverser(0);
+			}
 		default:
 			super.handleKeyPress(source, key, sprinting);
 			break;
@@ -186,6 +218,7 @@ public abstract class Locomotive extends FreightTank {
 				if (!hasDriver) {
 					this.setThrottle(0);
 					this.setAirBrake(1);
+					this.setReverser(0);
 				}
 			}
 			if (this.getDataManager().get(HORN) > 0) {
@@ -195,14 +228,18 @@ public abstract class Locomotive extends FreightTank {
 			}
 		}
 		
+		if (this.keyTimeout > 0) {
+			this.keyTimeout--;
+		}
+		
 		simulateWheelSlip();
 	}
 	
 	protected abstract int getAvailableHP();
 	
-	private double getAppliedTractiveEffort(Speed speed) {
+	protected double getAppliedTractiveEffort(Speed speed) {
 		double locoEfficiency = 0.7f; //TODO config
-		double outputHorsepower = Math.abs(Math.pow(getThrottle(), 3) * getAvailableHP());
+		double outputHorsepower = Math.abs(Math.pow(getThrottle() * getReverser(), 3) * getAvailableHP());
 		
 		double tractiveEffortNewtons = (2650.0 * ((locoEfficiency * outputHorsepower) / Math.max(1.4, Math.abs(speed.metric()))));
 		return tractiveEffortNewtons;
@@ -214,7 +251,7 @@ public abstract class Locomotive extends FreightTank {
 		staticTractiveEffort *= 1.5; // Fudge factor
 		double adhesionFactor = tractiveEffortNewtons / staticTractiveEffort;
 		if (adhesionFactor > 1) {
-			this.distanceTraveled += Math.copySign(Math.min((adhesionFactor-1)/10, 1), getThrottle());
+			this.distanceTraveled += Math.copySign(Math.min((adhesionFactor-1)/10, 1), getThrottle() * getReverser());
 		}
 	}
 	
@@ -240,7 +277,7 @@ public abstract class Locomotive extends FreightTank {
 			tractiveEffortNewtons = 0;
 		}
 		
-		return Math.copySign(tractiveEffortNewtons, getThrottle());
+		return Math.copySign(tractiveEffortNewtons, getThrottle() * getReverser());
 	}
 
 	/*
@@ -254,6 +291,17 @@ public abstract class Locomotive extends FreightTank {
 	public void setThrottle(float newThrottle) {
 		if (this.getThrottle() != newThrottle) {
 			dataManager.set(THROTTLE, newThrottle);
+			triggerResimulate();
+		}
+	}
+	
+	public float getReverser() {
+		return this.getDataManager().get(REVERSER);
+	}
+
+	public void setReverser(float reverse) {
+		if (this.getReverser() != reverse) {
+			this.getDataManager().set(REVERSER, reverse);
 			triggerResimulate();
 		}
 	}

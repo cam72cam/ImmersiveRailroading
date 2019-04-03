@@ -125,6 +125,7 @@ public class LocomotiveDiesel extends Locomotive {
 		if (stock instanceof LocomotiveDiesel && ((LocomotiveDiesel)stock).getDefinition().muliUnitCapable) {
 			((LocomotiveDiesel) stock).realSetThrottle(this.getThrottle() * (direction ? 1 : -1));
 			((LocomotiveDiesel) stock).realAirBrake(this.getAirBrake());
+			((Locomotive) stock).setReverser(this.getReverser());
 		}
 	}
 	

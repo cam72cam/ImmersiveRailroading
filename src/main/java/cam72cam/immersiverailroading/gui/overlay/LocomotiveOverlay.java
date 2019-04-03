@@ -126,11 +126,11 @@ public class LocomotiveOverlay extends Gui {
 	public void drawBackground(Locomotive loco) {
 		if(loco instanceof LocomotiveSteam) {
 			mc.renderEngine.bindTexture(OVERLAY_STEAM_TEXTURE);
-			drawTexturedModalRect(bgPosX, bgPosY, 0, 0, 105, 85);
+			drawTexturedModalRect(bgPosX, bgPosY, 0, 0, 130, 85);
 		}
 		if(loco instanceof LocomotiveDiesel) {
 			mc.renderEngine.bindTexture(OVERLAY_DIESEL_TEXTURE);
-			drawTexturedModalRect(bgPosX, bgPosY, 0, 0, 85, 85);
+			drawTexturedModalRect(bgPosX, bgPosY, 0, 0, 110, 85);
 		}
 		if(loco instanceof HandCar) {
 			mc.renderEngine.bindTexture(OVERLAY_HANDCAR_TEXTURE);

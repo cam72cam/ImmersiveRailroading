@@ -771,7 +771,7 @@ public class StockModel extends OBJRender {
 		}
 		GL11.glPopMatrix();
 		
-		float throttle = stock.getThrottle();
+		float throttle = stock.getReverser();
 		double forwardMax = (slottedLink.min().y - slottedLinkRotPoint.y) * 0.4;
 		double forwardMin = (slottedLink.max().y - slottedLinkRotPoint.y) * 0.65;
 		double throttleSlotPos = 0;

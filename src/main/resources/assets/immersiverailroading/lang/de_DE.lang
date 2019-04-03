@@ -47,6 +47,7 @@ chat.immersiverailroading:brush.no.variants=
 
 gui.immersiverailroading:label.brake=Bremse
 gui.immersiverailroading:label.throttle=Gas
+gui.immersiverailroading:label.reverser=Richtungswender
 gui.immersiverailroading:selector.type=Typ: %s
 gui.immersiverailroading:selector.gauge=Spurweite: %s
 gui.immersiverailroading:selector.quarters=%s Grad Kurve

@@ -55,6 +55,7 @@ chat.immersiverailroading:brush.no.variants=This stock has no livery variants
 
 gui.immersiverailroading:label.brake=Brake
 gui.immersiverailroading:label.throttle=Throttle
+gui.immersiverailroading:label.reverser=Reverser
 gui.immersiverailroading:selector.type=Type: %s
 gui.immersiverailroading:selector.gauge=Gauge: %s
 gui.immersiverailroading:selector.quarters=%s Degree Turn
