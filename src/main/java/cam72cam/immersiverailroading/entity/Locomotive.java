@@ -237,7 +237,7 @@ public abstract class Locomotive extends FreightTank {
 	
 	protected abstract int getAvailableHP();
 	
-	protected double getAppliedTractiveEffort(Speed speed) {
+	private double getAppliedTractiveEffort(Speed speed) {
 		double locoEfficiency = 0.7f; //TODO config
 		double outputHorsepower = Math.abs(Math.pow(getThrottle() * getReverser(), 3) * getAvailableHP());
 		
