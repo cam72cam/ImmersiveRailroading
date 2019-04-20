@@ -5,6 +5,7 @@ import cam72cam.immersiverailroading.util.TextUtil;
 public enum GuiText {
 	LABEL_BRAKE("label.brake"),
 	LABEL_THROTTLE("label.throttle"),
+	LABEL_REVERSER("label.reverser"),
 	SELECTOR_TYPE("selector.type"),
 	SELECTOR_QUARTERS("selector.quarters"),
 	SELECTOR_RAIL_BED("selector.rail_bed"),

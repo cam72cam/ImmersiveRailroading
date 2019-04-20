@@ -58,6 +58,7 @@ chat.immersiverailroading:switch_state.locked=Switch locked to %s
 
 gui.immersiverailroading:label.brake=Brake
 gui.immersiverailroading:label.throttle=Throttle
+gui.immersiverailroading:label.reverser=Reverser
 gui.immersiverailroading:selector.type=Type: %s
 gui.immersiverailroading:selector.gauge=Gauge: %s
 gui.immersiverailroading:selector.track=Track Style: %s
