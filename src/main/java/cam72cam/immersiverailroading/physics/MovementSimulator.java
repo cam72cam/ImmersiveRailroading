@@ -32,7 +32,7 @@ public class MovementSimulator {
 		Vec3d front = frontBogeyPosition();
 		Vec3d rear = rearBogeyPosition();
 		
-		if (Math.abs(moveDistance) < 0.001) {
+		if (Math.abs(moveDistance) < PhysicsAccummulator.MIN_SPEED) {
 			boolean isTurnTable;
 			
 			TileRailBase frontBase = world.getBlockEntity(new Vec3i(front), TileRailBase.class);
