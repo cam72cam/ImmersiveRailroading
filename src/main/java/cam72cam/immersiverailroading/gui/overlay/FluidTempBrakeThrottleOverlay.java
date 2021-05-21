@@ -6,7 +6,7 @@ import cam72cam.mod.MinecraftClient;
 import cam72cam.mod.entity.Entity;
 import cam72cam.mod.fluid.Fluid;
 
-public class DieselLocomotiveOverlay extends LocomotiveOverlay {
+public class FluidTempBrakeThrottleOverlay extends ControlPanelOverlay {
 	private final static int cold = 0x992a81af;
 	private final static int warm = 0x992a933a;
 	private final static int hot = 0x99d16c15;

@@ -5,11 +5,10 @@ import java.util.List;
 
 import cam72cam.immersiverailroading.util.FluidQuantity;
 import cam72cam.mod.entity.Entity;
-import cam72cam.mod.entity.ModdedEntity;
 import cam72cam.mod.entity.Player;
 import cam72cam.mod.fluid.Fluid;
 
-public class HandCar extends Locomotive {
+public class HandCar extends LocomotiveUnfueled {
 
 	@Override
 	protected int getAvailableHP() {

@@ -46,6 +46,7 @@ public abstract class EntityMoveableRollingStock extends EntityRidableRollingSto
     private double tickSkew = 1;
 
     private float sndRand;
+    private boolean ignoreSlope;
 
     private ISound wheel_sound;
     private ISound clackFront;
@@ -520,5 +521,18 @@ public abstract class EntityMoveableRollingStock extends EntityRidableRollingSto
         if (this.clackFront != null) {
             clackFront.stop();
         }
+    }
+
+    @Override
+    protected void createExplosion(Vec3d pos, float size, boolean damageTerrain) {
+        super.createExplosion(pos, size, damageTerrain);
+    }
+
+    public void setIgnoreSlope(boolean ignoreSlopeIn) {
+        ignoreSlope = ignoreSlopeIn;
+    }
+
+    public boolean ignoreSlope() {
+        return ignoreSlope;
     }
 }

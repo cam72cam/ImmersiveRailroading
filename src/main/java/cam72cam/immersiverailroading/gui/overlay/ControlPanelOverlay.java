@@ -1,17 +1,14 @@
 package cam72cam.immersiverailroading.gui.overlay;
 
+import cam72cam.immersiverailroading.entity.*;
 import cam72cam.mod.gui.helpers.GUIHelpers;
 import cam72cam.mod.render.OpenGL;
 import cam72cam.mod.resource.Identifier;
 import org.lwjgl.opengl.GL11;
 
 import cam72cam.immersiverailroading.ConfigGraphics;
-import cam72cam.immersiverailroading.entity.HandCar;
-import cam72cam.immersiverailroading.entity.Locomotive;
-import cam72cam.immersiverailroading.entity.LocomotiveDiesel;
-import cam72cam.immersiverailroading.entity.LocomotiveSteam;
 
-public class LocomotiveOverlay {
+public class ControlPanelOverlay {
 	
 	private int screenWidth;
 	private int screenHeight;
@@ -32,11 +29,12 @@ public class LocomotiveOverlay {
 	public static final Identifier OVERLAY_STEAM_TEXTURE = new Identifier("immersiverailroading:gui/overlay_steam.png");
 	public static final Identifier OVERLAY_DIESEL_TEXTURE = new Identifier("immersiverailroading:gui/overlay_diesel.png");
 	public static final Identifier OVERLAY_HANDCAR_TEXTURE = new Identifier("immersiverailroading:gui/overlay_handcar.png");
+	public static final Identifier OVERLAY_BRAKEVAN_TEXTURE = new Identifier("immersiverailroading:gui/overlay_brakevan.png");
 	
 	/*private static final int textHeight = 20;
 	private static final int textVerticalSpacing = 5;*/
 
-	public LocomotiveOverlay() {
+	public ControlPanelOverlay() {
 		screenWidth = GUIHelpers.getScreenWidth();
 		screenHeight = GUIHelpers.getScreenHeight();
 
@@ -86,7 +84,7 @@ public class LocomotiveOverlay {
 		currPosX += scalarWidth + scalarSpacer;
 	}
 	
-	public void drawSpeedDisplay(Locomotive loco, int offset) {
+	public void drawSpeedDisplay(ControllableStock loco, int offset) {
 		double speed = Math.abs(loco.getCurrentSpeed().metric());
 		String text = "";
 		switch (ConfigGraphics.speedUnit) {
@@ -111,15 +109,18 @@ public class LocomotiveOverlay {
 		}
 	}
 	
-	public void drawBackground(Locomotive loco) {
-		if(loco instanceof LocomotiveSteam) {
+	public void drawBackground(ControllableStock controllable) {
+		if(controllable instanceof LocomotiveSteam) {
 			GUIHelpers.texturedRect(OVERLAY_STEAM_TEXTURE, bgPosX, bgPosY, 105, 85);
 		}
-		if(loco instanceof LocomotiveDiesel) {
+		if(controllable instanceof LocomotiveDiesel) {
 			GUIHelpers.texturedRect(OVERLAY_DIESEL_TEXTURE, bgPosX, bgPosY, 85, 85);
 		}
-		if(loco instanceof HandCar) {
+		if(controllable instanceof HandCar || controllable instanceof LocomotiveCable || controllable instanceof ControlCar) {
 			GUIHelpers.texturedRect(OVERLAY_HANDCAR_TEXTURE, bgPosX, bgPosY, 60, 85);
+		}
+		if(controllable instanceof BrakeVan) {
+			GUIHelpers.texturedRect(OVERLAY_BRAKEVAN_TEXTURE, bgPosX, bgPosY, 60, 85);
 		}
 	}
 	

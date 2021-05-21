@@ -9,44 +9,13 @@ import cam72cam.immersiverailroading.registry.LocomotiveDefinition;
 import cam72cam.immersiverailroading.util.Speed;
 import cam72cam.mod.entity.Entity;
 import cam72cam.mod.entity.Player;
-import cam72cam.mod.entity.sync.TagSync;
 import cam72cam.mod.gui.GuiRegistry;
 import cam72cam.mod.item.ClickResult;
-import cam72cam.mod.serialization.StrictTagMapper;
-import cam72cam.mod.serialization.TagField;
 import cam72cam.mod.world.World;
 
 import java.util.UUID;
 
-public abstract class Locomotive extends FreightTank {
-	private static final float throttleNotch = 0.04f;
-	private static final float airBrakeNotch = 0.04f;
-
-	@TagField("deadMansSwitch")
-	private boolean deadMansSwitch;
-	private int deadManChangeTimeout;
-
-	@TagSync
-	@TagField("THROTTLE")
-	private float throttle = 0;
-
-	@TagSync
-	@TagField("AIR_BRAKE")
-	private float airBrake = 0;
-
-	@TagSync
-	@TagField("HORN")
-	protected int hornTime = 0;
-
-	@TagSync
-	@TagField(value = "HORN_PLAYER", mapper = StrictTagMapper.class)
-	protected UUID hornPlayer = null;
-
-	@TagSync
-	@TagField("BELL")
-	private int bellTime = 0;
-
-	private int bellKeyTimeout;
+public abstract class Locomotive extends ControllableStock {
 
 	/*
 	 * 
@@ -71,60 +40,7 @@ public abstract class Locomotive extends FreightTank {
 
 	@Override
 	public void handleKeyPress(Player source, KeyTypes key) {
-		switch(key) {
-		case HORN:
-			setHorn(10, source.getUUID());
-			break;
-        case BELL:
-            if (this.getDefinition().toggleBell) {
-            	if (bellKeyTimeout == 0) {
-					bellTime = bellTime != 0 ? 0 : 10;
-					bellKeyTimeout = 10;
-				}
-            } else {
-                setBell(10);
-            }
-            break;
-		case THROTTLE_UP:
-			if (getThrottle() < 1) {
-				setThrottle(getThrottle() + throttleNotch);
-			}
-			break;
-		case THROTTLE_ZERO:
-			setThrottle(0f);
-			break;
-		case THROTTLE_DOWN:
-			if (getThrottle() > -1) {
-				setThrottle(getThrottle() - throttleNotch);
-			}
-			break;
-		case AIR_BRAKE_UP:
-			if (getAirBrake() < 1) {
-				setAirBrake(getAirBrake() + airBrakeNotch);
-			}
-			break;
-		case AIR_BRAKE_ZERO:
-			setAirBrake(0f);
-			break;
-		case AIR_BRAKE_DOWN:
-			if (getAirBrake() > 0) {
-				setAirBrake(getAirBrake() - airBrakeNotch);
-			}
-			break;
-		case DEAD_MANS_SWITCH:
-			if (deadManChangeTimeout == 0) { 
-				deadMansSwitch = !deadMansSwitch;
-				if (deadMansSwitch) {
-					source.sendMessage(ChatText.DEADMANS_SWITCH_ENABLED.getMessage());
-				} else {
-					source.sendMessage(ChatText.DEADMANS_SWITCH_DISABLED.getMessage());
-				}
-				this.deadManChangeTimeout = 5;
-			}
-			break;
-			default:
-				super.handleKeyPress(source, key);
-		}
+		super.handleKeyPress(source, key);
 	}
 
     public ClickResult onClick(Player player, Player.Hand hand) {
@@ -141,53 +57,15 @@ public abstract class Locomotive extends FreightTank {
 				data.write();
 			}
 			else {
-				player.sendMessage(ChatText.RADIO_CANT_LINK.getMessage(this.getDefinition().name()));;
+				player.sendMessage(ChatText.RADIO_CANT_LINK.getMessage(this.getDefinition().name()));
 			}
 			return ClickResult.ACCEPTED;
 		}
 		return super.onClick(player, hand);
 	}
-	
-	@Override
-	public void onTick() {
-		super.onTick();
-		
-		if (getWorld().isServer) {
-			if (deadManChangeTimeout > 0) {
-				deadManChangeTimeout -= 1;
-			}
-			if (bellKeyTimeout > 0) {
-				bellKeyTimeout--;
-			}
-			
-			if (deadMansSwitch && !this.getCurrentSpeed().isZero()) {
-				boolean hasDriver = false;
-				for (Entity entity : this.getPassengers()) {
-					if (entity.isPlayer()) {
-						hasDriver = true;
-						break;
-					}
-				}
-				if (!hasDriver) {
-					this.setThrottle(0);
-					this.setAirBrake(1);
-				}
-			}
-			if (hornTime > 0) {
-				hornTime--;
-			} else if (hornPlayer != null) {
-				hornPlayer = null;
-			}
-			if (bellTime > 0 && !this.getDefinition().toggleBell) {
-				bellTime--;
-			}
-		}
 
-		this.distanceTraveled += simulateWheelSlip();
-	}
-	
 	protected abstract int getAvailableHP();
-	
+
 	private double getAppliedTractiveEffort(Speed speed) {
 		double locoEfficiency = 0.7f; //TODO config
 		double outputHorsepower = Math.abs(Math.pow(getThrottle(), 3) * getAvailableHP());
@@ -195,7 +73,8 @@ public abstract class Locomotive extends FreightTank {
 		double tractiveEffortNewtons = (2650.0 * ((locoEfficiency * outputHorsepower) / Math.max(1.4, Math.abs(speed.metric()))));
 		return tractiveEffortNewtons;
 	}
-	
+
+	@Override
 	protected double simulateWheelSlip() {
 		double tractiveEffortNewtons = getAppliedTractiveEffort(getCurrentSpeed());
 		double staticTractiveEffort = this.getDefinition().getStartingTractionNewtons(gauge) * slipCoefficient() * Config.ConfigBalance.tractionMultiplier;
@@ -206,8 +85,8 @@ public abstract class Locomotive extends FreightTank {
 		}
 		return 0;
 	}
-	
-	public double getTractiveEffortNewtons(Speed speed) {	
+
+	public double getTractiveEffortNewtons(Speed speed) {
 		if (!this.isBuilt()) {
 			return 0;
 		}
@@ -236,17 +115,6 @@ public abstract class Locomotive extends FreightTank {
 	 * 
 	 * Misc Helper functions
 	 */
-	
-	public float getThrottle() {
-		return throttle;
-	}
-	public void setThrottle(float newThrottle) {
-		if (this.getThrottle() != newThrottle) {
-			throttle = newThrottle;
-			triggerResimulate();
-		}
-	}
-	
 	public void setHorn(int val, UUID uuid) {
 		if (hornPlayer == null && uuid != null) {
 			hornPlayer = uuid;
@@ -267,22 +135,6 @@ public abstract class Locomotive extends FreightTank {
 			}
 		}
 		return null;
-	}
-
-	public float getAirBrake() {
-		return airBrake;
-	}
-	public void setAirBrake(float newAirBrake) {
-		if (this.getAirBrake() != newAirBrake) {
-			airBrake = newAirBrake;
-			triggerResimulate();
-		}
-	}
-	public int getBell() {
-		return bellTime;
-	}
-	public void setBell(int newBell) {
-		this.bellTime = newBell;
 	}
 
 	public double slipCoefficient() {

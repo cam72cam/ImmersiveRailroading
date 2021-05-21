@@ -6,7 +6,7 @@ import cam72cam.mod.MinecraftClient;
 import cam72cam.mod.entity.Entity;
 import cam72cam.mod.fluid.Fluid;
 
-public class SteamLocomotiveOverlay extends LocomotiveOverlay {
+public class SteamLocomotiveOverlay extends ControlPanelOverlay {
 	public void draw() {
 		Entity riding = MinecraftClient.getPlayer().getRiding();
 		if (riding == null) {

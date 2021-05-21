@@ -1,6 +1,7 @@
 package cam72cam.immersiverailroading.physics;
 
 import cam72cam.immersiverailroading.Config;
+import cam72cam.immersiverailroading.entity.ControllableStock;
 import cam72cam.immersiverailroading.entity.EntityMoveableRollingStock;
 import cam72cam.immersiverailroading.entity.EntityRollingStock;
 import cam72cam.immersiverailroading.entity.Locomotive;
@@ -41,19 +42,26 @@ public class PhysicsAccummulator {
 		rollingResistanceNewtons += 0.0015 * stockMassLb * 4.44822f;
 		
 		// SHOULD THIS HAVE DIRECTION MULT?
-		double grade = -Math.tan(Math.toRadians(pos.rotationPitch % 90)) * Config.ConfigBalance.slopeMultiplier;
-		// lbs * 1%gradeResistance * grade multiplier
-		gradeForceNewtons += (stockMassLb / 100) * (grade * 100)  * 4.44822f;
-		
-		if (stock instanceof Locomotive) {
-			Locomotive loco = (Locomotive) stock;
-			tractiveEffortNewtons += loco.getTractiveEffortNewtons(pos.speed) * (direction ? 1 : -1);
-			airBrake += Math.min(1, Math.pow(loco.getAirBrake() * loco.getDefinition().getBrakePower(), 2)) * loco.slipCoefficient();
-			brakeAdhesionNewtons += loco.getDefinition().getStartingTractionNewtons(stock.gauge); 
+		if(!movable.ignoreSlope()) {
+			double grade = -Math.tan(Math.toRadians(pos.rotationPitch % 90)) * Config.ConfigBalance.slopeMultiplier;
+			// lbs * 1%gradeResistance * grade multiplier
+			gradeForceNewtons += (stockMassLb / 100) * (grade * 100)  * 4.44822f;
+		}
+
+		if (stock instanceof ControllableStock) {
+			ControllableStock controllable = (ControllableStock) stock;
+			airBrake += Math.min(1, Math.pow(controllable.getAirBrake() * controllable.getDefinition().getBrakePower(), 2)) * controllable.slipCoefficient();
+			brakeAdhesionNewtons += controllable.getDefinition().getStartingTractionNewtons(stock.gauge);
+			if (controllable instanceof Locomotive) {
+				Locomotive loco = (Locomotive) controllable;
+				tractiveEffortNewtons += loco.getTractiveEffortNewtons(pos.speed) * (direction ? 1 : -1);
+			}
 		} else {
 			// Air brake only applies 1/4th
 			// 0.25 = steel wheel on steel rail	
-			brakeAdhesionNewtons += stock.getWeight() * 0.25 * 0.25 * 4.44822f;
+			if(stock.getDefinition().hasBrakes()) {
+				brakeAdhesionNewtons += stock.getWeight() * 0.25 * 0.25 * 4.44822f;
+			}
 		}
 		
 		int slowdown = movable.getSpeedRetarderSlowdown(pos);

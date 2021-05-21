@@ -6,18 +6,15 @@ import cam72cam.immersiverailroading.library.GuiText;
 import cam72cam.immersiverailroading.model.LocomotiveModel;
 import cam72cam.immersiverailroading.model.StockModel;
 import cam72cam.immersiverailroading.util.Speed;
-import cam72cam.mod.resource.Identifier;
 import com.google.gson.JsonObject;
 
 import java.util.List;
 
-public abstract class LocomotiveDefinition extends FreightDefinition {
-    public boolean toggleBell;
-    public Identifier bell;
+public abstract class LocomotiveDefinition extends ControllableStockDefinition {
     private String works;
     private int power;
-    private int traction;
     private Speed maxSpeed;
+    private int traction;
     private boolean hasRadioEquipment;
 
     LocomotiveDefinition(Class<? extends EntityRollingStock> type, String defID, JsonObject data) throws Exception {
@@ -35,20 +32,12 @@ public abstract class LocomotiveDefinition extends FreightDefinition {
     @Override
     public void parseJson(JsonObject data) throws Exception {
         super.parseJson(data);
-
-        works = data.get("works").getAsString();
-
         JsonObject properties = data.get("properties").getAsJsonObject();
-
         power = (int) Math.ceil(properties.get("horsepower").getAsInt() * internal_inv_scale);
-        traction = (int) Math.ceil(properties.get("tractive_effort_lbf").getAsInt() * internal_inv_scale);
         maxSpeed = Speed.fromMetric(properties.get("max_speed_kmh").getAsDouble() * internal_inv_scale);
+        traction = (int) Math.ceil(properties.get("tractive_effort_lbf").getAsInt() * internal_inv_scale);
         if (properties.has("radio_equipped")) {
             hasRadioEquipment = properties.get("radio_equipped").getAsBoolean();
-        }
-        toggleBell = true;
-        if (properties.has("toggle_bell")) {
-            toggleBell = properties.get("toggle_bell").getAsBoolean();
         }
     }
 
@@ -60,9 +49,8 @@ public abstract class LocomotiveDefinition extends FreightDefinition {
     @Override
     public List<String> getTooltip(Gauge gauge) {
         List<String> tips = super.getTooltip(gauge);
-        tips.add(GuiText.LOCO_WORKS.toString(this.works));
-        tips.add(GuiText.LOCO_HORSE_POWER.toString(this.getHorsePower(gauge)));
         tips.add(GuiText.LOCO_TRACTION.toString(this.getStartingTractionNewtons(gauge)));
+        tips.add(GuiText.LOCO_HORSE_POWER.toString(this.getHorsePower(gauge)));
         tips.add(GuiText.LOCO_MAX_SPEED.toString(this.getMaxSpeed(gauge).metricString()));
         return tips;
     }
@@ -74,10 +62,10 @@ public abstract class LocomotiveDefinition extends FreightDefinition {
     /**
      * @return tractive effort in newtons
      */
+    @Override
     public int getStartingTractionNewtons(Gauge gauge) {
         return (int) Math.ceil(gauge.scale() * this.traction * 4.44822);
     }
-
     public Speed getMaxSpeed(Gauge gauge) {
         return Speed.fromMinecraft(gauge.scale() * this.maxSpeed.minecraft());
     }

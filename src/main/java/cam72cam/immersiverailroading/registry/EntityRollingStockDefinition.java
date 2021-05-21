@@ -73,6 +73,7 @@ public abstract class EntityRollingStockDefinition {
     private double rearBounds;
     private double heightBounds;
     private double widthBounds;
+    private boolean brakeless;
     private double passengerCompartmentLength;
     private double passengerCompartmentWidth;
     private int weight;
@@ -207,6 +208,9 @@ public abstract class EntityRollingStockDefinition {
         maxPassengers = passenger.get("slots").getAsInt();
         if (passenger.has("should_sit")) {
             shouldSit = passenger.get("should_sit").getAsBoolean();
+        }
+        if (data.has("brakeless")) {
+            brakeless = passenger.get("brakeless").getAsBoolean();
         }
 
         bogeyFront = (float) (data.get("trucks").getAsJsonObject().get("front").getAsFloat() * internal_model_scale);
@@ -523,5 +527,9 @@ public abstract class EntityRollingStockDefinition {
                     d -> DefinitionManager.getDefinition(d.getString(fieldName))
             );
         }
+    }
+
+    public boolean hasBrakes() {
+        return brakeless;
     }
 }
