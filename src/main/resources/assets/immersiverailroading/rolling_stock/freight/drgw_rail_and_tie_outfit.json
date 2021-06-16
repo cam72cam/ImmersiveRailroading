@@ -1,30 +1,34 @@
 {
-	"name": "Rail & Tie Car",
+	"name": "D&RGW Rail & Tie Car",
+	"modeler": "Thomas4Peyton",
+	"pack": "Base Mod",
+	"works": "Denver & Rio Grande Western",
 	"model": "immersiverailroading:models/rolling_stock/freight/drgw_rail_and_tie_outfit/drgw_rail_and_tie_outfit.obj",
-	"darken_model": "-0.05",
+	"tex_variants": {"D&RGW": "drgw", "D&RGW #06051": "drgw_06051"},
+	"darken_model": "-0.02",
 	"model_gauge_m": 2.7,
 	"recommended_gauge_m": 0.9144,
 	"properties": {
-		"weight_kg": 10200
+		"weight_kg": 12790
 	},
 	"passenger": {
 		"slots": 4,
 		"center_x": 0,
 		"center_y": 4,
-		"length": 9,
+		"length": 10,
 		"width": 3.5
 	},
 	"freight": {
-		"slots": 24,
+		"slots": 27,
 		"width": 6,
 		"cargo": ["all"]
 	},
 	"trucks": {
-		"front": 9.3, 
-		"rear": -9.3
+		"front": 9, 
+		"rear": -9
 	},
 	"couplers": {
-		"front_offset": -0.22,
-		"rear_offset": -0.22
+		"front_offset": -0.20,
+		"rear_offset": -0.20
 	}
 }

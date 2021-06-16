@@ -1,11 +1,15 @@
 {
 	"name": "3000 Series Boxcar",
+	"modeler": "Thomas4Peyton",
+	"pack": "Base Mod",
+	"works": "American Car & Foundry Co.",
 	"model": "immersiverailroading:models/rolling_stock/freight/drgw_3000class_boxcar/drgw_3000class_boxcar.obj",
-	"darken_model": "-0.05",
+	"tex_variants": {"D&RGW Flying Grande": "flying_grande", "D&RGW Moffat Herald": "moffat_herald"},
+	"darken_model": "-0.02",
 	"model_gauge_m": 2.7,
 	"recommended_gauge_m": 0.9144,
 	"properties": {
-		"weight_kg": 10300
+		"weight_kg": 10340
 	},
 	"passenger": {
 		"slots": 4,
@@ -15,8 +19,8 @@
 		"width": 3
 	},
 	"freight": {
-		"slots": 64,
-		"width": 16,
+		"slots": 35,
+		"width": 8,
 		"cargo": ["all"]
 	},
 	"trucks": {

@@ -1,7 +1,10 @@
 {
 	"name": "5500 Series Stockcar",
+	"modeler": "Thomas4Peyton",
+	"pack": "Base Mod",
+	"works": "American Car & Foundry Co.",
 	"model": "immersiverailroading:models/rolling_stock/freight/drgw_5500class_stockcar/drgw_5500class_stockcar.obj",
-	"darken_model": "-0.05",
+	"darken_model": "-0.03",
 	"model_gauge_m": 2.7,
 	"recommended_gauge_m": 0.9144,
 	"properties": {
@@ -15,8 +18,8 @@
 		"width": 3.5
 	},
 	"freight": {
-		"slots": 48,
-		"width": 12,
+		"slots": 32,
+		"width": 8,
 		"cargo": ["all"]
 	},
 	"trucks": {
